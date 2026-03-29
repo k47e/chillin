@@ -748,11 +748,383 @@ body::before {
   font-size: 11px;
   color: var(--jade);
 }
+
+/* ─── PAGE SYSTEM ────────────────────────────── */
+.page { display: none; flex-direction: column; height: 100vh; overflow: hidden; }
+.page.active { display: flex; }
+#page-pos { display: flex; } /* default */
+
+/* ─── BOTTOM NAV ─────────────────────────────── */
+.bottom-nav {
+  flex-shrink: 0;
+  display: flex;
+  background: var(--panel);
+  border-top: 1px solid var(--edge);
+  padding: 8px 0 16px;
+  z-index: 50;
+}
+
+.nav-btn {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 6px 4px;
+  cursor: pointer;
+  border: none;
+  background: transparent;
+  color: var(--fog);
+  font-size: 10px;
+  font-family: 'Zen Kaku Gothic New', sans-serif;
+  letter-spacing: 0.5px;
+  transition: color 0.18s;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.nav-btn .nav-icon { font-size: 22px; line-height: 1; }
+.nav-btn.active { color: var(--gold); }
+.nav-btn:hover { color: var(--smoke); }
+
+/* ─── MENU MANAGEMENT PAGE ───────────────────── */
+.mgmt-scroll {
+  flex: 1;
+  overflow-y: auto;
+  padding: 16px 20px 40px;
+  scrollbar-width: none;
+}
+.mgmt-scroll::-webkit-scrollbar { display: none; }
+
+.mgmt-item {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  background: var(--card);
+  border: 1px solid var(--edge);
+  border-radius: var(--r);
+  padding: 14px 16px;
+  margin-bottom: 10px;
+  transition: border-color 0.2s;
+}
+.mgmt-item:hover { border-color: var(--fog); }
+
+.mgmt-thumb {
+  width: 60px; height: 60px;
+  border-radius: 10px;
+  object-fit: cover;
+  flex-shrink: 0;
+  background: var(--panel);
+}
+
+.mgmt-info { flex: 1; min-width: 0; }
+.mgmt-name {
+  font-family: 'Noto Serif TC', serif;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--paper);
+  margin-bottom: 3px;
+}
+.mgmt-meta {
+  font-family: 'DM Mono', monospace;
+  font-size: 11px;
+  color: var(--mist);
+  letter-spacing: 0.5px;
+}
+.mgmt-meta span { color: var(--gold-lt); }
+
+.mgmt-actions { display: flex; gap: 8px; flex-shrink: 0; }
+
+.mgmt-btn {
+  width: 34px; height: 34px;
+  border-radius: 8px;
+  border: 1px solid var(--edge);
+  background: var(--panel);
+  color: var(--smoke);
+  font-size: 15px;
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  transition: all 0.15s;
+}
+.mgmt-btn:hover { border-color: var(--gold); color: var(--gold); }
+.mgmt-btn.danger:hover { border-color: var(--coral); color: var(--coral); }
+
+.toggle-switch {
+  position: relative;
+  width: 40px; height: 22px;
+  flex-shrink: 0;
+}
+.toggle-switch input { opacity: 0; width: 0; height: 0; }
+.toggle-slider {
+  position: absolute; inset: 0;
+  background: var(--edge);
+  border-radius: 22px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.toggle-slider::before {
+  content: '';
+  position: absolute;
+  width: 16px; height: 16px;
+  left: 3px; top: 3px;
+  border-radius: 50%;
+  background: var(--fog);
+  transition: all 0.2s;
+}
+.toggle-switch input:checked + .toggle-slider { background: var(--gold-glow); border: 1px solid rgba(212,168,83,0.4); }
+.toggle-switch input:checked + .toggle-slider::before { transform: translateX(18px); background: var(--gold); }
+
+/* Edit inline form */
+.edit-form {
+  background: var(--panel);
+  border: 1px solid rgba(212,168,83,0.25);
+  border-radius: var(--r-sm);
+  padding: 16px;
+  margin-top: -2px;
+  margin-bottom: 10px;
+  display: none;
+  animation: fadeSlideUp 0.2s ease;
+}
+.edit-form.open { display: block; }
+
+.edit-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.edit-field { display: flex; flex-direction: column; gap: 5px; }
+.edit-field label {
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: var(--fog);
+}
+.edit-field input {
+  background: var(--card);
+  border: 1px solid var(--edge);
+  border-radius: 8px;
+  padding: 8px 12px;
+  color: var(--pearl);
+  font-family: 'DM Mono', monospace;
+  font-size: 14px;
+  outline: none;
+  transition: border-color 0.15s;
+  width: 100%;
+}
+.edit-field input:focus { border-color: var(--gold); }
+
+.edit-btns { display: flex; gap: 8px; margin-top: 4px; }
+.edit-save {
+  flex: 1; height: 38px;
+  background: var(--gold-glow);
+  border: 1px solid rgba(212,168,83,0.35);
+  border-radius: 8px;
+  color: var(--gold-lt);
+  font-weight: 700; font-size: 13px;
+  cursor: pointer;
+  font-family: 'Zen Kaku Gothic New', sans-serif;
+  transition: all 0.15s;
+}
+.edit-save:hover { background: rgba(212,168,83,0.25); }
+.edit-cancel-btn {
+  height: 38px; padding: 0 16px;
+  background: transparent;
+  border: 1px solid var(--edge);
+  border-radius: 8px;
+  color: var(--mist);
+  font-size: 13px;
+  cursor: pointer;
+  font-family: 'Zen Kaku Gothic New', sans-serif;
+}
+
+/* ─── REPORTS PAGE ───────────────────────────── */
+.report-scroll {
+  flex: 1;
+  overflow-y: auto;
+  padding: 16px 20px 40px;
+  scrollbar-width: none;
+}
+.report-scroll::-webkit-scrollbar { display: none; }
+
+.report-tabs {
+  display: flex;
+  gap: 6px;
+  margin-bottom: 20px;
+  background: var(--card);
+  border-radius: var(--r-pill);
+  padding: 4px;
+  border: 1px solid var(--edge);
+}
+.report-tab {
+  flex: 1;
+  padding: 8px;
+  border-radius: var(--r-pill);
+  border: none;
+  background: transparent;
+  color: var(--mist);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-family: 'Zen Kaku Gothic New', sans-serif;
+}
+.report-tab.active {
+  background: var(--gold-glow);
+  color: var(--gold-lt);
+  border: 1px solid rgba(212,168,83,0.3);
+}
+
+.stat-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.stat-box {
+  background: var(--card);
+  border: 1px solid var(--edge);
+  border-radius: var(--r);
+  padding: 16px;
+}
+.stat-box.full { grid-column: 1 / -1; }
+.stat-box.profit-box {
+  border-color: rgba(78,203,138,0.25);
+  background: linear-gradient(135deg, rgba(78,203,138,0.07), var(--card));
+}
+
+.stat-box-label {
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--fog);
+  margin-bottom: 6px;
+}
+.stat-box-value {
+  font-family: 'DM Serif Display', serif;
+  font-size: 26px;
+  letter-spacing: -0.5px;
+  color: var(--gold-lt);
+  line-height: 1;
+  margin-bottom: 4px;
+}
+.stat-box.profit-box .stat-box-value { color: var(--jade); font-size: 32px; }
+.stat-box-sub {
+  font-family: 'DM Mono', monospace;
+  font-size: 11px;
+  color: var(--mist);
+}
+
+/* Profit rate bar */
+.rate-bar-wrap { margin-top: 10px; }
+.rate-bar-bg {
+  height: 6px;
+  background: var(--edge);
+  border-radius: 6px;
+  overflow: hidden;
+  margin-top: 6px;
+}
+.rate-bar-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--jade), var(--jade-lt));
+  border-radius: 6px;
+  transition: width 0.8s cubic-bezier(0.34,1.2,0.64,1);
+}
+
+/* Ranking */
+.rank-section-title {
+  display: flex; align-items: center; gap: 10px;
+  margin: 20px 0 12px;
+}
+.rank-section-title span {
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: var(--fog);
+}
+.rank-section-title .section-line { flex: 1; height: 1px; background: var(--edge); }
+
+.rank-card {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: var(--card);
+  border: 1px solid var(--edge);
+  border-radius: var(--r-sm);
+  padding: 12px 14px;
+  margin-bottom: 8px;
+  transition: border-color 0.2s;
+}
+.rank-card:hover { border-color: var(--fog); }
+
+.rank-num-badge {
+  width: 28px; height: 28px;
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'DM Mono', monospace;
+  font-size: 12px;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+.rank-num-badge.r1 { background: rgba(212,168,83,0.2); color: var(--gold); border: 1px solid rgba(212,168,83,0.4); }
+.rank-num-badge.r2 { background: rgba(200,200,200,0.1); color: #ccc; border: 1px solid rgba(200,200,200,0.2); }
+.rank-num-badge.r3 { background: rgba(180,120,60,0.15); color: #c87840; border: 1px solid rgba(180,120,60,0.3); }
+.rank-num-badge.r4, .rank-num-badge.r5 { background: var(--panel); color: var(--fog); border: 1px solid var(--edge); }
+
+.rank-thumb {
+  width: 42px; height: 42px;
+  border-radius: 8px;
+  object-fit: cover;
+  flex-shrink: 0;
+  background: var(--panel);
+}
+
+.rank-info { flex: 1; min-width: 0; }
+.rank-name { font-size: 14px; font-weight: 600; color: var(--paper); margin-bottom: 2px; }
+.rank-sales { font-family: 'DM Mono', monospace; font-size: 11px; color: var(--mist); }
+
+.rank-profit-val {
+  font-family: 'DM Mono', monospace;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--jade);
+  flex-shrink: 0;
+}
+
+/* Orders list in reports */
+.order-entry {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: var(--card);
+  border: 1px solid var(--edge);
+  border-radius: var(--r-sm);
+  padding: 12px 14px;
+  margin-bottom: 8px;
+}
+.order-time {
+  font-family: 'DM Mono', monospace;
+  font-size: 11px;
+  color: var(--mist);
+  flex-shrink: 0;
+  min-width: 50px;
+}
+.order-items-text { flex: 1; font-size: 13px; color: var(--smoke); }
+.order-amount {
+  font-family: 'DM Mono', monospace;
+  font-size: 14px;
+  color: var(--gold-lt);
+  flex-shrink: 0;
+}
 </style>
 </head>
 <body>
 
-<div class="app">
+<div class="page active" id="page-pos"><div class="app" style="position:relative;">
 
   <!-- TOP BAR -->
   <div class="topbar">
@@ -949,7 +1321,16 @@ body::before {
     </div>
   </div>
 
+
 </div><!-- end app -->
+
+<div class="bottom-nav" style="position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:430px;z-index:99;background:var(--panel);border-top:1px solid var(--edge);">
+  <button class="nav-btn active" id="nav-pos" onclick="showPage('pos')"><span class="nav-icon">🍽</span>點餐</button>
+  <button class="nav-btn" id="nav-mgmt" onclick="showPage('mgmt')"><span class="nav-icon">⚙️</span>菜單</button>
+  <button class="nav-btn" id="nav-report" onclick="showPage('report')"><span class="nav-icon">📊</span>報表</button>
+</div>
+</div><!-- end page-pos -->
+
 
 <!-- CONFIRM SUBMIT DIALOG -->
 <div class="dialog-overlay" id="submitDialog">
@@ -1143,8 +1524,326 @@ document.querySelectorAll('.dialog-overlay').forEach(o => {
   o.addEventListener('click', e => { if (e.target === o) o.classList.remove('show'); });
 });
 
+
+function showPage(page) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  const target = document.getElementById('page-' + page);
+  if (target) target.classList.add('active');
+
+  // update bottom nav
+  ['pos','mgmt','report'].forEach(p => {
+    const btn = document.getElementById('nav-' + p);
+    if (btn) btn.classList.toggle('active', p === page);
+  });
+
+  if (page === 'report') renderReport('today');
+  if (page === 'mgmt') renderMgmt();
+}
+
 // ── Init ──────────────────────────────────────
 updateCart();
+
+
+// ══ PAGE NAVIGATION ════════════════════════════
+
+
+// ══ MENU DATA ══════════════════════════════════
+const menuData = [
+  { id:'oyster2',     name:'生蠔（2顆）',   unit:'現撈·配檸檬汁', price:200, cost:72,  active:true,  imgId:'oyster' },
+  { id:'oyster-r2',   name:'生蠔（續2次）', unit:'加點優惠',       price:180, cost:72,  active:true,  imgId:'oyster' },
+  { id:'oyster-r3',   name:'生蠔（續3次）', unit:'超值加點',       price:160, cost:72,  active:true,  imgId:'oyster' },
+  { id:'baguette',    name:'蠔野法棍脆片',  unit:'奶油·生蠔·香草', price:90,  cost:62,  active:true,  imgId:'baguette' },
+  { id:'oysrice',     name:'金蠔飯',        unit:'招牌·黃金醬汁',  price:330, cost:128, active:true,  imgId:'oyster_rice' },
+  { id:'shrimpburgr', name:'百蝦堡',        unit:'鮮蝦·特製醬',    price:180, cost:83,  active:true,  imgId:'shrimp_burger' },
+];
+
+// imgSrc lookup from existing img tags
+function getImgSrc(id) {
+  const el = document.querySelector('#card-' + id + ' .card-img-inner');
+  return el ? el.src : '';
+}
+
+// ══ MENU MANAGEMENT ════════════════════════════
+function renderMgmt() {
+  const list = document.getElementById('mgmtList');
+  list.innerHTML = menuData.map((item, idx) => `
+    <div class="mgmt-item" id="mgmt-${item.id}">
+      <img class="mgmt-thumb" src="${getImgSrc(item.id)}" alt="${item.name}" />
+      <div class="mgmt-info">
+        <div class="mgmt-name">${item.name}</div>
+        <div class="mgmt-meta">${item.unit} ｜ 售價 <span>$${item.price}</span> ｜ 成本 $${item.cost}</div>
+      </div>
+      <div class="mgmt-actions">
+        <button class="mgmt-btn" onclick="toggleEdit(${idx})" title="編輯">✏️</button>
+        <label class="toggle-switch" title="啟用/停用">
+          <input type="checkbox" ${item.active ? 'checked' : ''} onchange="toggleActive(${idx}, this.checked)">
+          <span class="toggle-slider"></span>
+        </label>
+      </div>
+    </div>
+    <div class="edit-form" id="editform-${idx}">
+      <div class="edit-row">
+        <div class="edit-field">
+          <label>品項名稱</label>
+          <input type="text" id="ef-name-${idx}" value="${item.name}" />
+        </div>
+        <div class="edit-field">
+          <label>單位說明</label>
+          <input type="text" id="ef-unit-${idx}" value="${item.unit}" />
+        </div>
+      </div>
+      <div class="edit-row">
+        <div class="edit-field">
+          <label>售價 NT$</label>
+          <input type="number" id="ef-price-${idx}" value="${item.price}" />
+        </div>
+        <div class="edit-field">
+          <label>成本 NT$</label>
+          <input type="number" id="ef-cost-${idx}" value="${item.cost}" />
+        </div>
+      </div>
+      <div class="edit-btns">
+        <button class="edit-save" onclick="saveEdit(${idx})">✓ 儲存變更</button>
+        <button class="edit-cancel-btn" onclick="toggleEdit(${idx})">取消</button>
+      </div>
+    </div>
+  `).join('');
+}
+
+function toggleEdit(idx) {
+  const form = document.getElementById('editform-' + idx);
+  form.classList.toggle('open');
+}
+
+function saveEdit(idx) {
+  const name  = document.getElementById('ef-name-'  + idx).value;
+  const unit  = document.getElementById('ef-unit-'  + idx).value;
+  const price = parseInt(document.getElementById('ef-price-' + idx).value);
+  const cost  = parseInt(document.getElementById('ef-cost-'  + idx).value);
+
+  menuData[idx].name  = name;
+  menuData[idx].unit  = unit;
+  menuData[idx].price = price;
+  menuData[idx].cost  = cost;
+
+  // also update items price/cost for cart calc
+  const id = menuData[idx].id;
+  if (items[id]) { items[id].price = price; items[id].cost = cost; }
+
+  document.getElementById('editform-' + idx).classList.remove('open');
+  renderMgmt();
+  showToast('✅ 已儲存：' + name, '#4ecb8a');
+}
+
+function toggleActive(idx, val) {
+  menuData[idx].active = val;
+  showToast(val ? '✅ 已啟用' : '⛔ 已停用', val ? '#4ecb8a' : '#e06050');
+}
+
+function openAddItem() {
+  showToast('💡 新增品項功能：請直接在 Glide 後台新增', '#d4a853');
+}
+
+// ══ REPORTS ════════════════════════════════════
+// Simulated order history for demo
+const orderHistory = (() => {
+  const now = new Date();
+  const orders = [];
+  const names = ['生蠔（2顆）','金蠔飯','百蝦堡','蠔野法棍脆片','生蠔（續2次）','生蠔（續3次）'];
+  const prices = [200, 330, 180, 90, 180, 160];
+  const costs  = [72,  128, 83,  62, 72,  72];
+
+  // Generate ~40 orders over past 30 days
+  for (let d = 0; d < 30; d++) {
+    const date = new Date(now);
+    date.setDate(date.getDate() - d);
+    const ordersToday = d === 0 ? 4 : Math.floor(Math.random() * 6) + 1;
+    for (let o = 0; o < ordersToday; o++) {
+      const hour = 11 + Math.floor(Math.random() * 10);
+      const min  = Math.floor(Math.random() * 60);
+      const ts   = new Date(date);
+      ts.setHours(hour, min);
+      const itemCount = Math.floor(Math.random() * 3) + 1;
+      let total = 0, cost = 0;
+      const lineItems = [];
+      for (let i = 0; i < itemCount; i++) {
+        const idx = Math.floor(Math.random() * names.length);
+        const qty = Math.floor(Math.random() * 2) + 1;
+        total += prices[idx] * qty;
+        cost  += costs[idx]  * qty;
+        lineItems.push({ name: names[idx], qty, price: prices[idx], cost: costs[idx] });
+      }
+      orders.push({ ts, total, cost, profit: total - cost, items: lineItems, dayOffset: d });
+    }
+  }
+  return orders;
+})();
+
+let currentReportTab = 'today';
+
+function setReportTab(tab, el) {
+  currentReportTab = tab;
+  document.querySelectorAll('.report-tab').forEach(t => t.classList.remove('active'));
+  el.classList.add('active');
+  renderReport(tab);
+}
+
+function renderReport(tab) {
+  let filtered;
+  if (tab === 'today')  filtered = orderHistory.filter(o => o.dayOffset === 0);
+  if (tab === 'month')  filtered = orderHistory.filter(o => o.dayOffset < 30);
+  if (tab === 'year')   filtered = orderHistory;
+
+  const totalRev    = filtered.reduce((s, o) => s + o.total, 0);
+  const totalCost   = filtered.reduce((s, o) => s + o.cost, 0);
+  const totalProfit = filtered.reduce((s, o) => s + o.profit, 0);
+  const profitRate  = totalRev > 0 ? ((totalProfit / totalRev) * 100).toFixed(1) : '0.0';
+
+  // Ranking
+  const profitMap = {};
+  const salesMap  = {};
+  filtered.forEach(o => {
+    o.items.forEach(it => {
+      profitMap[it.name] = (profitMap[it.name] || 0) + (it.price - it.cost) * it.qty;
+      salesMap[it.name]  = (salesMap[it.name]  || 0) + it.qty;
+    });
+  });
+  const ranking = Object.entries(profitMap)
+    .sort((a, b) => b[1] - a[1])
+    .slice(0, 5);
+
+  const rankClasses = ['r1','r2','r3','r4','r5'];
+  const rankLabels  = ['🥇','🥈','🥉','4','5'];
+
+  // Thumb map
+  const thumbMap = {
+    '生蠔（2顆）':  getImgSrc('oyster2'),
+    '生蠔（續2次）': getImgSrc('oyster-r2'),
+    '生蠔（續3次）': getImgSrc('oyster-r3'),
+    '蠔野法棍脆片':  getImgSrc('baguette'),
+    '金蠔飯':       getImgSrc('oysrice'),
+    '百蝦堡':       getImgSrc('shrimpburgr'),
+  };
+
+  // Today orders list
+  const todayOrders = tab === 'today' ? filtered : [];
+
+  const periodLabel = tab === 'today' ? '今日' : tab === 'month' ? '本月' : '年度';
+
+  document.getElementById('reportContent').innerHTML = `
+    <div class="stat-grid">
+      <div class="stat-box">
+        <div class="stat-box-label">📈 ${periodLabel}營業額</div>
+        <div class="stat-box-value">$${totalRev.toLocaleString()}</div>
+        <div class="stat-box-sub">${filtered.length} 筆訂單</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-box-label">💸 ${periodLabel}成本</div>
+        <div class="stat-box-value">$${totalCost.toLocaleString()}</div>
+        <div class="stat-box-sub">食材成本合計</div>
+      </div>
+      <div class="stat-box full profit-box">
+        <div class="stat-box-label">💹 ${periodLabel}總利潤</div>
+        <div class="stat-box-value">$${totalProfit.toLocaleString()}</div>
+        <div class="rate-bar-wrap">
+          <div class="stat-box-sub">利潤率 ${profitRate}%</div>
+          <div class="rate-bar-bg">
+            <div class="rate-bar-fill" style="width:${profitRate}%"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="rank-section-title">
+      <span>🏆 最賺品項排行榜</span>
+      <div class="section-line"></div>
+    </div>
+
+    ${ranking.map(([name, profit], i) => `
+      <div class="rank-card">
+        <div class="rank-num-badge ${rankClasses[i]}">${rankLabels[i]}</div>
+        <img class="rank-thumb" src="${thumbMap[name] || ''}" alt="${name}" />
+        <div class="rank-info">
+          <div class="rank-name">${name}</div>
+          <div class="rank-sales">銷售 ${salesMap[name] || 0} 份</div>
+        </div>
+        <div class="rank-profit-val">+$${profit.toLocaleString()}</div>
+      </div>
+    `).join('')}
+
+    ${tab === 'today' && todayOrders.length > 0 ? `
+      <div class="rank-section-title" style="margin-top:24px;">
+        <span>📋 今日訂單記錄</span>
+        <div class="section-line"></div>
+      </div>
+      ${todayOrders.sort((a,b) => b.ts - a.ts).map(o => `
+        <div class="order-entry">
+          <div class="order-time">${o.ts.getHours().toString().padStart(2,'0')}:${o.ts.getMinutes().toString().padStart(2,'0')}</div>
+          <div class="order-items-text">${o.items.map(it => it.name + (it.qty > 1 ? ' ×' + it.qty : '')).join('、')}</div>
+          <div class="order-amount">$${o.total}</div>
+        </div>
+      `).join('')}
+    ` : ''}
+  `;
+
+  // animate profit bar
+  setTimeout(() => {
+    const bar = document.querySelector('.rate-bar-fill');
+    if (bar) bar.style.width = profitRate + '%';
+  }, 100);
+}
+
 </script>
+
+<!-- ══ MENU MANAGEMENT PAGE ═══════════════════════ -->
+<div class="page" id="page-mgmt">
+  <div class="topbar">
+    <div class="brand">
+      <div class="brand-name">菜單管理</div>
+      <div class="brand-sub">MENU · EDITOR</div>
+    </div>
+    <div class="topbar-right">
+      <div class="icon-btn" onclick="openAddItem()" title="新增品項" style="font-size:22px;color:var(--gold);">＋</div>
+    </div>
+  </div>
+
+  <div class="mgmt-scroll">
+    <div id="mgmtList"></div>
+  </div>
+
+  <div class="bottom-nav" id="mgmt-nav">
+    <button class="nav-btn" onclick="showPage('pos')"><span class="nav-icon">🍽</span>點餐</button>
+    <button class="nav-btn active" onclick="showPage('mgmt')"><span class="nav-icon">⚙️</span>菜單</button>
+    <button class="nav-btn" onclick="showPage('report')"><span class="nav-icon">📊</span>報表</button>
+  </div>
+</div>
+
+<!-- ══ REPORT PAGE ════════════════════════════════ -->
+<div class="page" id="page-report">
+  <div class="topbar">
+    <div class="brand">
+      <div class="brand-name">營運報表</div>
+      <div class="brand-sub">REPORTS · ANALYTICS</div>
+    </div>
+  </div>
+
+  <div class="report-scroll">
+    <div class="report-tabs">
+      <button class="report-tab active" onclick="setReportTab('today', this)">今日</button>
+      <button class="report-tab" onclick="setReportTab('month', this)">本月</button>
+      <button class="report-tab" onclick="setReportTab('year', this)">年度</button>
+    </div>
+
+    <div id="reportContent"></div>
+  </div>
+
+  <div class="bottom-nav">
+    <button class="nav-btn" onclick="showPage('pos')"><span class="nav-icon">🍽</span>點餐</button>
+    <button class="nav-btn" onclick="showPage('mgmt')"><span class="nav-icon">⚙️</span>菜單</button>
+    <button class="nav-btn active" onclick="showPage('report')"><span class="nav-icon">📊</span>報表</button>
+  </div>
+</div>
+
+<!-- POS bottom nav (inject into pos page) -->
 </body>
 </html>
