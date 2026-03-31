@@ -272,6 +272,75 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:9999;
 .rank-name{font-size:13px;font-weight:600;color:var(--paper);margin-bottom:2px;}
 .rank-sales{font-family:'DM Mono',monospace;font-size:10px;color:var(--mist);}
 .rank-profit{font-family:'DM Mono',monospace;font-size:13px;font-weight:600;color:var(--jade);flex-shrink:0;}
+
+/* ── POS DATE BAR ─────────────────────────────── */
+.pos-date-bar {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  background: var(--deep);
+  border-bottom: 1px solid var(--edge);
+  padding: 10px 16px;
+  gap: 8px;
+  position: relative;
+}
+.date-nav-btn {
+  width: 34px; height: 34px;
+  border-radius: 50%;
+  border: 1px solid var(--edge);
+  background: var(--panel);
+  color: var(--smoke);
+  font-size: 20px;
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+  line-height: 1;
+  transition: all 0.15s;
+}
+.date-nav-btn:active { border-color: var(--gold); color: var(--gold); }
+.date-nav-btn:disabled { opacity: 0.25; cursor: not-allowed; }
+.pos-date-center {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: var(--r-sm);
+  border: 1px solid transparent;
+  transition: all 0.15s;
+  gap: 1px;
+}
+.pos-date-center:active { background: var(--gold-glow); border-color: rgba(212,168,83,0.25); }
+.pos-date-main {
+  font-family: 'Noto Serif TC', serif;
+  font-size: 16px;
+  font-weight: 900;
+  color: var(--paper);
+  letter-spacing: 0.5px;
+  line-height: 1;
+}
+.pos-date-main.is-today { color: var(--gold-lt); }
+.pos-date-sub {
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  color: var(--mist);
+  letter-spacing: 2px;
+  text-transform: uppercase;
+}
+.pos-date-badge {
+  display: inline-block;
+  background: rgba(212,168,83,0.15);
+  border: 1px solid rgba(212,168,83,0.3);
+  border-radius: var(--r-pill);
+  padding: 1px 8px;
+  font-family: 'DM Mono', monospace;
+  font-size: 9px;
+  color: var(--gold);
+  letter-spacing: 1px;
+  margin-left: 6px;
+  vertical-align: middle;
+}
 </style>
 </head>
 <body>
@@ -285,6 +354,18 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:9999;
       <div class="icon-btn cart-badge" data-count="3" onclick="showPage('report')">🧾</div>
     </div>
   </div>
+
+  <!-- DATE BAR -->
+  <div class="pos-date-bar">
+    <button class="date-nav-btn" onclick="shiftPosDate(-1)">‹</button>
+    <div class="pos-date-center" onclick="openDatePicker()">
+      <div class="pos-date-main" id="posDateMain"></div>
+      <div class="pos-date-sub" id="posDateSub"></div>
+    </div>
+    <button class="date-nav-btn" onclick="shiftPosDate(1)" id="posDateNext">›</button>
+    <input type="date" id="posDateInput" style="position:absolute;opacity:0;pointer-events:none;width:0;height:0;" onchange="onDateInputChange(this.value)"/>
+  </div>
+
   <div class="cat-tabs">
     <div class="cat-tab active" onclick="filterCat('全部',this)">全部</div>
     <div class="cat-tab" onclick="filterCat('生蠔',this)">生蠔系列</div>
@@ -529,7 +610,79 @@ function changeQty(id,d){
   const b=document.getElementById('qb-'+id),c=document.getElementById('card-'+id);
   if(qty[id]>0){b.textContent=qty[id];c.classList.add('has-qty');}
   else{b.textContent='';c.classList.remove('has-qty');}
-  updateCart();
+  
+// ── POS DATE BAR ─────────────────────────────────
+const DAYS_TW = ['日','一','二','三','四','五','六'];
+let posDateOffset = 0; // 0=today, -1=yesterday, etc.
+
+function getPosDate() {
+  const d = new Date();
+  d.setHours(0,0,0,0);
+  d.setDate(d.getDate() + posDateOffset);
+  return d;
+}
+
+function updatePosDateBar() {
+  const d = getPosDate();
+  const now = new Date(); now.setHours(0,0,0,0);
+  const isToday = d.getTime() === now.getTime();
+  const tomorrow = new Date(now); tomorrow.setDate(now.getDate()+1);
+  const isFuture = d > now;
+
+  // format date
+  const yyyy = d.getFullYear();
+  const mm = String(d.getMonth()+1).padStart(2,'0');
+  const dd = String(d.getDate()).padStart(2,'0');
+  const mainEl = document.getElementById('posDateMain');
+  const subEl  = document.getElementById('posDateSub');
+  const nextBtn = document.getElementById('posDateNext');
+
+  mainEl.innerHTML = `${yyyy} / ${mm} / ${dd}` +
+    (isToday ? '<span class="pos-date-badge">今日</span>' : '');
+  mainEl.className = 'pos-date-main' + (isToday ? ' is-today' : '');
+
+  const dayLabel = isToday ? 'TODAY · 週'+DAYS_TW[d.getDay()] :
+                  (posDateOffset === -1 ? 'YESTERDAY · 週'+DAYS_TW[d.getDay()] :
+                   '週'+DAYS_TW[d.getDay()]);
+  subEl.textContent = dayLabel;
+
+  // disable "next" if already at today
+  nextBtn.disabled = posDateOffset >= 0;
+
+  // update input value for picker
+  document.getElementById('posDateInput').value = `${yyyy}-${mm}-${dd}`;
+}
+
+function shiftPosDate(delta) {
+  const newOffset = posDateOffset + delta;
+  if (newOffset > 0) return; // can't go future
+  posDateOffset = newOffset;
+  updatePosDateBar();
+}
+
+function openDatePicker() {
+  const input = document.getElementById('posDateInput');
+  // set max to today
+  const now = new Date();
+  const pad = n => String(n).padStart(2,'0');
+  input.max = `${now.getFullYear()}-${pad(now.getMonth()+1)}-${pad(now.getDate())}`;
+  input.showPicker ? input.showPicker() : input.click();
+}
+
+function onDateInputChange(val) {
+  if (!val) return;
+  const selected = new Date(val + 'T00:00:00');
+  const now = new Date(); now.setHours(0,0,0,0);
+  const diff = Math.round((selected - now) / 86400000);
+  if (diff > 0) return; // block future
+  posDateOffset = diff;
+  updatePosDateBar();
+}
+
+// init date bar
+updatePosDateBar();
+
+updateCart();
 }
 
 // ── CUSTOM ITEM ────────────────────────────────
