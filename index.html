@@ -581,11 +581,6 @@ html,body{width:100%;height:100%;background:var(--bg);color:var(--text);font-fam
       <div class="topbar-name">津丘 Chill-In</div>
       <div class="topbar-sub">POS · 點餐系統</div>
     </div>
-    <div class="topbar-right">
-      <div class="topbar-btn" onclick="showPage('report')" style="position:relative;">
-        🧾<span class="tbadge" id="cartDot" style="display:none;">0</span>
-      </div>
-    </div>
   </div>
 
   <div class="date-bar">
@@ -938,7 +933,7 @@ function updateCart(){
   document.getElementById('cartCount').textContent='已選 '+n+' 項';
   document.getElementById('profitRate').textContent='利潤率 '+r+'%';
   const dot=document.getElementById('cartDot');
-  dot.textContent=n>0?n:'';dot.style.display=n>0?'flex':'none';
+  if(dot){dot.textContent=n>0?n:'';dot.style.display=n>0?'flex':'none';}
   document.getElementById('submitBtn').disabled=n===0;
   document.getElementById('sd-items').textContent=n+' 項';
   document.getElementById('sd-total').textContent='NT$'+t.toLocaleString();
