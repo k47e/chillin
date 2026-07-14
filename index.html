@@ -1050,7 +1050,7 @@ function renderMgmt(){
       ${getThumbOrEmoji(item.id)}
       <div class="mgmt-info">
         <div class="mgmt-name">${item.name}</div>
-        <div class="mgmt-meta">${item.unit} | 售 <b>$${item.price}</b> | 本 $${item.cost}</div>
+        <div class="mgmt-meta">${item.unit} | 售 <b>$${item.price}</b> | <span style="color:#E05050;font-weight:700;">成本 $${item.cost}</span></div>
       </div>
       <div class="mgmt-actions">
         <button class="mgmt-edit-btn" onclick="toggleEdit(${idx})">✏️</button>
