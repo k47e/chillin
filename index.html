@@ -995,11 +995,60 @@ function showToast(msg,color){
   t.classList.add('show');clearTimeout(t._t);t._t=setTimeout(()=>t.classList.remove('show'),2300);
 }
 function getThumbOrEmoji(id){
+  const item=menuData.find(m=>m.id===id);
+  if(item&&item.img)return `<img class="mgmt-thumb" src="${item.img}" />`;
   const el=document.querySelector('#card-'+id+' .mcard-img img');
   if(el)return `<img class="mgmt-thumb" src="${el.src}" />`;
   return `<div class="mgmt-thumb" style="display:flex;align-items:center;justify-content:center;font-size:26px;background:var(--bg);border-radius:var(--r-xs);">🍽️</div>`;
 }
+function triggerImageUpload(idx){
+  document.getElementById('imgfile-'+idx).click();
+}
+function resizeImageFile(file,maxSize){
+  return new Promise((resolve,reject)=>{
+    const img=new Image();
+    const url=URL.createObjectURL(file);
+    img.onload=function(){
+      URL.revokeObjectURL(url);
+      let w=img.naturalWidth,h=img.naturalHeight;
+      const scale=Math.min(1,maxSize/Math.max(w,h));
+      w=Math.round(w*scale);h=Math.round(h*scale);
+      const canvas=document.createElement('canvas');
+      canvas.width=w;canvas.height=h;
+      canvas.getContext('2d').drawImage(img,0,0,w,h);
+      resolve(canvas.toDataURL('image/jpeg',0.85));
+    };
+    img.onerror=reject;
+    img.src=url;
+  });
+}
+function handleImageUpload(idx,input){
+  const file=input.files&&input.files[0];
+  if(!file)return;
+  if(!file.type.startsWith('image/')){showToast('請選擇圖片檔案','#E05050');return;}
+  resizeImageFile(file,600).then(function(dataUrl){
+    const item=menuData[idx];
+    item.img=dataUrl;
+    const posImgDiv=document.querySelector('#card-'+item.id+' .mcard-img');
+    if(posImgDiv){
+      const fixedHeight=posImgDiv.getBoundingClientRect().height;
+      const badge=posImgDiv.querySelector('.mcard-qty-badge');
+      const badgeHTML=badge?badge.outerHTML:'';
+      const badgeText=badge?badge.textContent:'';
+      posImgDiv.innerHTML=`<img style="width:100%;height:100%;object-fit:cover;display:block;" src="${dataUrl}"/>`+badgeHTML;
+      if(fixedHeight>0)posImgDiv.style.height=fixedHeight+'px';
+      const newBadge=posImgDiv.querySelector('.mcard-qty-badge');
+      if(newBadge)newBadge.textContent=badgeText;
+    }
+    renderMgmt();
+    showToast('✅ 圖片已更新','#27AE60');
+  }).catch(function(){
+    showToast('圖片處理失敗','#E05050');
+  });
+  input.value='';
+}
 function getThumb(id){const el=document.querySelector('#card-'+id+' .mcard-img img');return el?el.src:'';}
+
 
 function renderMgmt(){
   document.getElementById('mgmtList').innerHTML=menuData.map((item,idx)=>`
@@ -1011,6 +1060,8 @@ function renderMgmt(){
       </div>
       <div class="mgmt-actions">
         <button class="mgmt-edit-btn" onclick="toggleEdit(${idx})">✏️</button>
+        <button class="mgmt-edit-btn" onclick="triggerImageUpload(${idx})">📷</button>
+        <input type="file" accept="image/*" style="display:none" id="imgfile-${idx}" onchange="handleImageUpload(${idx},this)"/>
         ${item.id.startsWith('custom_')?`<button class="mgmt-edit-btn mgmt-del-btn" onclick="deleteMenuItem(${idx})">🗑</button>`:''}
         <label class="tog"><input type="checkbox" ${item.active?'checked':''} onchange="toggleActive(${idx},this.checked)"><span class="tog-sl"></span></label>
       </div>
