@@ -227,7 +227,7 @@ html,body{width:100%;height:100%;background:var(--bg);color:var(--text);font-fam
 }
 .custom-card-title{font-size:13px;font-weight:700;color:var(--text2);display:flex;align-items:center;gap:8px;}
 .custom-fields{display:flex;flex-direction:column;gap:8px;}
-.ci-row{display:grid;grid-template-columns:1fr auto auto;gap:8px;align-items:center;}
+.ci-row{display:grid;grid-template-columns:1fr auto;gap:8px;align-items:center;}
 .ci-input{
   background:var(--bg);border:1.5px solid var(--border2);
   border-radius:var(--r-xs);padding:10px 12px;
@@ -235,13 +235,14 @@ html,body{width:100%;height:100%;background:var(--bg);color:var(--text);font-fam
 }
 .ci-input:focus{border-color:var(--blue);background:white;}
 .ci-input::placeholder{color:var(--text3);}
-.ci-price-input{width:80px;}
+.ci-price-input{width:110px;}
 .ci-add-btn{
   height:40px;padding:0 14px;
   background:var(--blue);border:none;border-radius:var(--r-xs);
   color:white;font-size:12px;font-weight:800;cursor:pointer;white-space:nowrap;
   box-shadow:0 4px 12px rgba(67,86,224,.3);
 }
+.ci-add-btn-full{width:100%;}
 .expense-list{margin-top:10px;display:flex;flex-direction:column;gap:6px;}
 .expense-item{
   display:flex;align-items:center;gap:8px;
@@ -559,6 +560,7 @@ html,body{width:100%;height:100%;background:var(--bg);color:var(--text);font-fam
 .add-btn-sm{height:32px;padding:0 12px;background:var(--blue);border:none;border-radius:var(--r-xs);color:white;font-size:11px;font-weight:800;cursor:pointer;white-space:nowrap;}
 .add-custom-row{display:flex;gap:6px;padding:7px 0;border-bottom:1px solid var(--border);}
 .add-ci{flex:1;background:var(--bg);border:1.5px solid var(--border2);border-radius:var(--r-xs);padding:6px 9px;color:var(--text);font-size:12px;font-weight:600;outline:none;}
+.add-ci-price{flex:0 0 70px;width:70px;}
 .add-ci:focus{border-color:var(--blue);}
 .add-ci::placeholder{color:var(--text3);font-weight:400;}
 .oaction-bar{display:flex;gap:8px;margin-top:12px;}
@@ -598,8 +600,8 @@ html,body{width:100%;height:100%;background:var(--bg);color:var(--text);font-fam
 .dp-in{flex:1 1 0;width:0;min-width:0;height:40px;box-sizing:border-box;background:var(--bg);border:1.5px solid var(--border2);border-radius:var(--r-xs);padding:0 10px;color:var(--text);font-family:'DM Mono',monospace;font-size:13px;font-weight:600;outline:none;color-scheme:light;line-height:normal;}
 .dp-in:focus{border-color:var(--blue);background:white;}
 .dp-in-text{font-size:12px;}
-.dp-datewrap{position:relative;flex:1 1 0;min-width:0;height:40px;}
-.dp-datewrap .dp-in{width:100%;color:transparent;}
+.dp-datewrap{position:relative;flex:1 1 0;width:0;min-width:0;height:40px;overflow:hidden;}
+.dp-datewrap .dp-in{position:absolute;inset:0;width:100%;color:transparent;}
 .dp-datewrap .dp-in::-webkit-datetime-edit,
 .dp-datewrap .dp-in::-webkit-datetime-edit-fields-wrapper,
 .dp-datewrap .dp-in::-webkit-datetime-edit-text,
@@ -766,23 +768,23 @@ html,body{width:100%;height:100%;background:var(--bg);color:var(--text);font-fam
       <div class="sec-hdr" id="customItemSecHdr"><span class="sec-hdr-label"><img src="data:image/png;base64,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" style="width:15px;height:15px;vertical-align:middle;margin-right:2px;"/> 自訂品項</span><div class="sec-hdr-line"></div></div>
       <div class="custom-card">
         <div class="custom-fields">
-          <input class="ci-input" id="ci-name" type="text" placeholder="品項名稱（例：加飯）" maxlength="20"/>
-          <input class="ci-input" id="ci-note" type="text" placeholder="備註（選填）" maxlength="40"/>
           <div class="ci-row">
+            <input class="ci-input" id="ci-name" type="text" placeholder="品項名稱（例：加飯）" maxlength="20"/>
             <input class="ci-input ci-price-input" id="ci-price" type="number" placeholder="金額 NT$" min="0"/>
-            <button class="ci-add-btn" onclick="addCustomItem()">＋ 加入</button>
           </div>
+          <input class="ci-input" id="ci-note" type="text" placeholder="備註（選填）" maxlength="40"/>
+          <button class="ci-add-btn ci-add-btn-full" onclick="addCustomItem()">＋ 加入</button>
         </div>
       </div>
       <div class="sec-hdr" style="margin-top:8px;"><span class="sec-hdr-label"><img src="data:image/png;base64,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" style="width:15px;height:15px;vertical-align:middle;margin-right:2px;"/> 每日支出</span><div class="sec-hdr-line"></div></div>
       <div class="custom-card">
         <div class="custom-fields">
-          <input class="ci-input" id="ex-name" type="text" placeholder="項目（例：瓦斯費）" maxlength="20"/>
-          <input class="ci-input" id="ex-note" type="text" placeholder="備註（選填）" maxlength="40"/>
           <div class="ci-row">
+            <input class="ci-input" id="ex-name" type="text" placeholder="項目（例：瓦斯費）" maxlength="20"/>
             <input class="ci-input ci-price-input" id="ex-price" type="number" placeholder="金額 NT$" min="0"/>
-            <button class="ci-add-btn" onclick="addExpense()">＋ 記錄</button>
           </div>
+          <input class="ci-input" id="ex-note" type="text" placeholder="備註（選填）" maxlength="40"/>
+          <button class="ci-add-btn ci-add-btn-full" onclick="addExpense()">＋ 記錄</button>
         </div>
         <div id="expenseList" class="expense-list"></div>
       </div>
@@ -1532,6 +1534,8 @@ function enterBatch(){
   batchMode=true;
   const btn=document.getElementById('batchToggleBtn');
   if(btn){btn.style.background='var(--blue)';btn.style.color='white';}
+  const tabs=document.querySelector('.status-tabs');
+  if(tabs)tabs.style.display='none';
   document.getElementById('batchBar').style.display='flex';
   // show/hide send button based on tab
   const sendBtn=document.getElementById('sendAllBtn2');
@@ -1544,6 +1548,8 @@ function exitBatch(){
   batchMode=false;
   const btn=document.getElementById('batchToggleBtn');
   if(btn){btn.style.background='';btn.style.color='';}
+  const tabs=document.querySelector('.status-tabs');
+  if(tabs)tabs.style.display='';
   document.getElementById('batchBar').style.display='none';
   document.getElementById('ordersList').classList.remove('batch-mode');
   orderHistory.forEach(o=>o.sel=false);
@@ -1622,7 +1628,6 @@ function renderOrders(){
     return `<div class="oday-group">
       <div class="oday-hdr">
         <div><div class="oday-date">📅 ${date}</div><div class="oday-meta">共 ${dayOrders.length} 筆 · $${dayTotal.toLocaleString()}</div></div>
-        ${isPending?`<button class="pill-btn primary" style="font-size:11px;" onclick="enterBatch()">☑ 批次</button>`:''}
       </div>
       ${dayOrders.map(o=>`
         <div class="ocard${o.sel?' picked':''}" id="ocard-${o.oi}">
@@ -1641,7 +1646,7 @@ function renderOrders(){
             <div class="odt-edit"><label>日期時間</label><input class="odt-input" type="datetime-local" id="odt-${o.oi}" value="${toDTL(o.ts)}"/></div>
             ${o.items.map((it,ii)=>`<div class="oitem-row"><div class="oitem-name">${it.name}${it.note?`<div class="oitem-note">📝 ${it.note}</div>`:''}</div><div class="oqctrl"><button class="oqbtn" onclick="chOQ(${o.oi},${ii},-1)">−</button><span class="oqnum" id="oq-${o.oi}-${ii}">${it.qty}</span><button class="oqbtn" onclick="chOQ(${o.oi},${ii},1)">+</button></div><div class="oitem-sub" id="os-${o.oi}-${ii}">$${(it.price*it.qty).toLocaleString()}</div><button class="odel-btn" onclick="delOItem(${o.oi},${ii})">×</button></div>`).join('')}
             <div class="add-item-row"><select class="add-sel" id="osel-${o.oi}">${menuData.map(m=>`<option value="${m.id}">${m.name} $${m.price}</option>`).join('')}</select><button class="add-btn-sm" onclick="addOItem(${o.oi})">＋ 加入</button></div>
-            <div class="add-custom-row"><input class="add-ci" type="text" id="ocn-${o.oi}" placeholder="自填品項名稱" maxlength="20"/><input class="add-ci" type="number" id="ocp-${o.oi}" placeholder="金額" style="width:70px;" min="0"/><button class="add-btn-sm" onclick="addOCustom(${o.oi})" style="background:var(--orange);">＋</button></div>
+            <div class="add-custom-row"><input class="add-ci" type="text" id="ocn-${o.oi}" placeholder="自填品項名稱" maxlength="20"/><input class="add-ci add-ci-price" type="number" id="ocp-${o.oi}" placeholder="金額" min="0"/><button class="add-btn-sm" onclick="addOCustom(${o.oi})" style="background:var(--orange);">＋</button></div>
             <div class="oaction-bar">
               <button class="osave-btn" onclick="saveOCard(${o.oi})">✓ 儲存修改</button>
               ${isPending?`<button class="osave-btn" onclick="markAsSent(${o.oi})" style="background:var(--green);color:white;border:none;">✅ 已送餐</button>`:`<button class="odelete-btn" onclick="askDelOrder(${o.oi})">🗑 刪除</button>`}
