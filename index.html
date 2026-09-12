@@ -775,8 +775,13 @@ html,body{width:100%;height:100%;background:var(--bg);color:var(--text);font-fam
   .mcard-price{font-size:17px;}
 
   .cart-footer{padding:18px 32px;}
-  .cart-footer .cart-info,.cart-footer .cart-discount-row,.cart-footer .cart-btns{max-width:640px;margin-left:auto;margin-right:auto;}
-  .cart-btns{max-width:640px;margin:0 auto;}
+  .cart-footer .cart-info,.cart-footer .cart-discount-row,.cart-footer .cart-btns{
+    width:100%;
+    max-width:1200px;
+    margin-left:auto;
+    margin-right:auto;
+    box-sizing:border-box;
+  }
 
   .sheet{width:480px;}
 
