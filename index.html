@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="zh-TW">
 <head>
@@ -2235,7 +2234,7 @@ function togglePaid(ev,oi){
   if(!o)return;
   o.paid=!o.paid;
   renderOrders();
-  showToast(o.paid?'✅ 已標記為已付款':'↺ 已標記為未付款',o.paid?'#27AE60':'#F4A234');
+  showToast(o.paid?'已標記為已付款':'已標記為未付款',o.paid?'#27AE60':'#F4A234');
 }
 function markAsSent(oi){
   orderHistory[oi].status='sent';
@@ -2346,7 +2345,7 @@ function renderOrders(){
               <div class="ocard-items">${o.items.map(it=>it.name+(it.qty>1?'×'+it.qty:'')).join(' · ')}</div>
             </div>
             ${isPending?`<button class="send-btn" onclick="markAsSent(${o.oi})">送餐</button>`:`<div class="oexpand" onclick="toggleOCard(${o.oi})">⌄</div>`}
-            <div class="paid-toggle${o.paid?' paid':''}" onclick="togglePaid(event,${o.oi})">${o.paid?'✓ 已付':'未付款'}</div>
+            <div class="paid-toggle${o.paid?' paid':''}" onclick="togglePaid(event,${o.oi})">${o.paid?'已付款':'未付款'}</div>
           </div>
           <div class="odetail" id="odet-${o.oi}">
             <div class="odt-edit"><label>日期時間</label><input class="odt-input" type="datetime-local" id="odt-${o.oi}" value="${toDTL(o.ts)}"/></div>
