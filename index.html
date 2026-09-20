@@ -1530,11 +1530,37 @@ function saveCloudSettings(){
   showToast('✅ 雲端同步設定已儲存','#27AE60');
 }
 
-let categories=[
+const defaultCategories=[
   {id:'生蠔',emoji:'🦪',name:'生蠔系列'},
   {id:'主食',emoji:'🍚',name:'主食'},
   {id:'輕食',emoji:'🥖',name:'輕食'},
 ];
+const categoriesStorageKey='chillin-pos-categories-v1';
+function loadCategories(){
+  try{
+    const saved=JSON.parse(localStorage.getItem(categoriesStorageKey)||'null');
+    if(Array.isArray(saved)&&saved.length){
+      const seen=new Set();
+      const valid=saved.filter(c=>c&&typeof c.id==='string'&&c.id&&typeof c.name==='string'&&c.name.trim()&&!seen.has(c.id)).map(c=>{
+        seen.add(c.id);
+        return {id:c.id,name:c.name.trim(),emoji:typeof c.emoji==='string'?c.emoji:''};
+      });
+      if(valid.length)return valid;
+    }
+  }catch(err){console.warn('分類資料讀取失敗',err);}
+  return defaultCategories.map(c=>({...c}));
+}
+function saveCategories(){
+  try{
+    localStorage.setItem(categoriesStorageKey,JSON.stringify(categories));
+    return true;
+  }catch(err){
+    console.warn('分類資料儲存失敗',err);
+    showToast('分類無法儲存，請確認瀏覽器允許網站資料','#E05050');
+    return false;
+  }
+}
+let categories=loadCategories();
 
 function catNextId(){let i=1;while(categories.find(c=>c.id==='cat_'+i))i++;return 'cat_'+i;}
 function catDisplayName(c){return c?(c.emoji?c.emoji+' ':'')+c.name:'無分類';}
@@ -1604,6 +1630,7 @@ function doSaveCat(){
       const hdr=document.querySelector('#sec-'+editId+' .sec-hdr-label');
       if(hdr)hdr.textContent=catDisplayName(c);
     }
+    saveCategories();
     closeOvl('addCatOvl');
     renderCatPills();
     updateAiCatOptions();
@@ -1613,6 +1640,7 @@ function doSaveCat(){
   }else{
     const id=catNextId();
     categories.push({id,emoji,name});
+    saveCategories();
     ensureCatSection(id);
     closeOvl('addCatOvl');
     renderCatPills();
@@ -1637,6 +1665,7 @@ function deleteCatPrompt(catId){
   }
   deleteArmedCat=null;
   categories=categories.filter(x=>x.id!==catId);
+  saveCategories();
   const sec=document.getElementById('sec-'+catId);if(sec)sec.remove();
   renderCatPills();
   updateAiCatOptions();
@@ -2677,6 +2706,7 @@ function toggleDC(i){const el=document.getElementById('dc-'+i);if(el)el.classLis
 
 document.querySelectorAll('.overlay').forEach(o=>{o.addEventListener('click',e=>{if(e.target===o)o.classList.remove('show');});});
 initImageCropInteractions();
-renderDateBar();updateCart();renderCatPills();
+categories.forEach(c=>ensureCatSection(c.id));
+renderDateBar();updateCart();renderCatPills();updateAiCatOptions();
 </script>
 </body></html>
